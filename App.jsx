@@ -110,16 +110,6 @@ const SleepTimerApp = () => {
     });
   }, []);
 
-  //
-  const AnimatedTouchable = animated(TouchableOpacity);
-
-  const {padding, borderRadius, backgroundColor} = useSpring({
-    padding: !isTimerRunning ? 20 : 25,
-    borderRadius: !isTimerRunning ? 50 : 20,
-    backgroundColor: isTimerRunning ? 'rgb(239 68 68)' : 'rgb(59 130 246)',
-    config: {duration: 500, easing: easings.easeInOutSine},
-  });
-
   const toggleTimer = () => {
     if (!isTimerRunning) {
       BackgroundTimerModule.startTimer();
@@ -129,30 +119,22 @@ const SleepTimerApp = () => {
     }
   };
 
+  //Anims
+
+  const AnimatedTouchable = animated(TouchableOpacity);
+
+  const {padding, borderRadius, backgroundColor} = useSpring({
+    padding: !isTimerRunning ? 20 : 25,
+    borderRadius: !isTimerRunning ? 50 : 20,
+    backgroundColor: isTimerRunning ? 'rgb(239 68 68)' : 'rgb(59 130 246)',
+    config: {duration: 500, easing: easings.easeInOutCubic},
+  });
+
   const [isModalVisible, setModalVisible] = useState(false);
 
   const toggleModal = () => {
     setModalVisible(!isModalVisible);
   };
-
-  const transitions = useTransition(!isTimerRunning, {
-    from: {
-      opacity: 0,
-      scale: 0.4,
-      translateY: -20,
-      position: 'absolute',
-      config: {duration: 200},
-    },
-    enter: {opacity: 1, scale: 1, translateY: 0},
-    config: {duration: 200},
-    leave: {
-      opacity: 0,
-      scale: 0.8,
-      translateY: -20,
-      position: 'absolute',
-      config: {duration: 200},
-    },
-  });
 
   const {x, y, x1, y1} = useSpring({
     from: {x: 0.5, y: 0, x1: 0.5, y1: 0.05},
@@ -177,66 +159,81 @@ const SleepTimerApp = () => {
     loop: true,
   });
 
+  const animation = useSpring({
+    opacity: isTimerRunning ? 0 : 1,
+    config: {duration: 500, easing: easings.easeInOutSine},
+  });
+
+  const animation1 = useSpring({
+    opacity: isTimerRunning ? 1 : 0,
+    config: {duration: 500, easing: easings.easeInOutSine},
+  });
+
   return (
     <View className="flex portrait:flex-col landscape:flex-row items-center h-full landscape:justify-evenly portrait:justify-between bg-black">
       <View className=" flex flex-col p-6 rounded-3xl h-72 items-center landscape:mt-6 portrait:mt-32 justify-center ">
-        {transitions((style, item) =>
-          item ? (
-            <animated.View style={style}>
-              <Text className="text-xl mb-6 text-center flex text-white font-semibold">
-                Minutes:
-              </Text>
-              {savedActiveIndex != null ? (
-                <CarouselComponent
-                  savedActiveIndex={savedActiveIndex}
-                  setActiveIndex={setActiveIndex}
-                />
-              ) : (
-                <></>
-              )}
+        <View className="relative h-full items-center">
+          <animated.View
+            style={animation}
+            className={!isTimerRunning ? 'absolute' : 'absolute'}>
+            <Text className="text-xl mb-6 text-center flex text-white font-semibold">
+              Minutes:
+            </Text>
+            {savedActiveIndex != null ? (
+              <CarouselComponent
+                savedActiveIndex={savedActiveIndex}
+                setActiveIndex={setActiveIndex}
+              />
+            ) : (
+              <></>
+            )}
+          </animated.View>
+          {timerLeft != null ? (
+            <animated.View
+              style={animation1}
+              className={isTimerRunning ? '' : 'absolute'}>
+              <animated.View className="flex flex-col items-center justify-around h-full">
+                <View className="flex flex-col items-center">
+                  <Text className="text-4xl text-white font-extrabold">
+                    {timerLeft} Minutes
+                  </Text>
+                  <TypingDots />
+                </View>
+                <View className="w-28 h-28 flex items-center justify-center">
+                  <Image
+                    source={require('./assets/images/sleep.png')}
+                    className="w-28 h-28"
+                    style={{
+                      position: 'absolute',
+                    }}
+                  />
+                  <animated.Image
+                    source={require('./assets/images/z1.png')}
+                    style={{
+                      width: 30,
+                      height: 30,
+                      position: 'absolute',
+                      left: x.to(val => `${val * 100}%`),
+                      top: y.to(val => `${val * 100}%`),
+                    }}
+                  />
+                  <animated.Image
+                    source={require('./assets/images/z1.png')}
+                    style={{
+                      width: 20,
+                      height: 20,
+                      position: 'absolute',
+                      left: x1.to(val => `${(val + 0.3) * 100}%`),
+                      top: y1.to(val => `${(val - 0.05) * 100}%`),
+                    }}
+                  />
+                </View>
+              </animated.View>
             </animated.View>
           ) : (
-            <animated.View
-              className="flex flex-col items-center justify-around h-full"
-              style={style}>
-              <View className="flex flex-col items-center">
-                <Text className="text-4xl text-white font-extrabold">
-                  {timerLeft} Minutes
-                </Text>
-                <TypingDots />
-              </View>
-              <View className="w-28 h-28 flex items-center justify-center">
-                <Image
-                  source={require('./assets/images/sleep.png')}
-                  className="w-28 h-28"
-                  style={{
-                    position: 'absolute',
-                  }}
-                />
-                <animated.Image
-                  source={require('./assets/images/z1.png')}
-                  style={{
-                    width: 30,
-                    height: 30,
-                    position: 'absolute',
-                    left: x.to(val => `${val * 100}%`),
-                    top: y.to(val => `${val * 100}%`),
-                  }}
-                />
-                <animated.Image
-                  source={require('./assets/images/z1.png')}
-                  style={{
-                    width: 20,
-                    height: 20,
-                    position: 'absolute',
-                    left: x1.to(val => `${(val + 0.3) * 100}%`),
-                    top: y1.to(val => `${(val - 0.05) * 100}%`),
-                  }}
-                />
-              </View>
-            </animated.View>
-          ),
-        )}
+            <></>
+          )}
+        </View>
       </View>
       <View className=" flex-row justify-center portrait:mb-20 portrait:w-[80%] gap-3 items-center">
         {setActiveIndex != null ? (
