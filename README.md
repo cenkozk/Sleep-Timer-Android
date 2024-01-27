@@ -1,79 +1,43 @@
-This is a new [**React Native**](https://reactnative.dev) project, bootstrapped using [`@react-native-community/cli`](https://github.com/react-native-community/cli).
+# Sleep Timer
 
-# Getting Started
+Sleep Timer is a React Native mobile application that helps you set a timer to automatically stop media playback and create a silent environment for your sleep.
 
->**Note**: Make sure you have completed the [React Native - Environment Setup](https://reactnative.dev/docs/environment-setup) instructions till "Creating a new application" step, before proceeding.
+## Features
 
-## Step 1: Start the Metro Server
+- **Media Control**: The app can automatically pause or stop any running media (music, podcasts, etc.) when the sleep timer is triggered.
 
-First, you will need to start **Metro**, the JavaScript _bundler_ that ships _with_ React Native.
+- **Interactive Timer Selector**: Set your desired sleep duration with an interactive number slider, making it easy to customize the timer.
 
-To start Metro, run the following command from the _root_ of your React Native project:
+- **Widget Support**: Use the included widget to initiate the sleep timer directly from your device's home screen.
 
-```bash
-# using npm
-npm start
+## Usage
 
-# OR using Yarn
-yarn start
-```
+- : Open the app and use the interactive slider to set your desired sleep duration.
 
-## Step 2: Start your Application
+- : Toggle the sleep timer to start or stop the countdown.
 
-Let Metro Bundler run in its _own_ terminal. Open a _new_ terminal from the _root_ of your React Native project. Run the following command to start your _Android_ or _iOS_ app:
+- : The app will automatically pause or stop any playing media when the timer reaches zero.
 
-### For Android
+## Notifications
 
-```bash
-# using npm
-npm run android
+Sleep Timer provides notifications for easy access to timer controls even when the app is running in the background.
 
-# OR using Yarn
-yarn android
-```
+- **Add Five Minutes**: Extend your sleep timer on the go by tapping the "Add 5 Minutes" action directly from the notification.
 
-### For iOS
+- **Stop Timer**: Quickly stop the sleep timer by tapping the "Stop Timer" action directly from the notification.
 
-```bash
-# using npm
-npm run ios
+## Widget
 
-# OR using Yarn
-yarn ios
-```
+Sleep Timer comes with a handy widget that allows you to initiate and stop your sleep timer directly from your home screen.
 
-If everything is set up _correctly_, you should see your new app running in your _Android Emulator_ or _iOS Simulator_ shortly provided you have set up your emulator/simulator correctly.
+## Contributing
 
-This is one way to run your app — you can also run it directly from within Android Studio and Xcode respectively.
+Thank you for considering contributing to Sleep Timer! Contributions are highly appreciated.
 
-## Step 3: Modifying your App
+### Reporting Issues
 
-Now that you have successfully run the app, let's modify it.
+If you find any bugs, have feature requests, or encounter any issues, please open an issue on GitHub.
 
-1. Open `App.tsx` in your text editor of choice and edit some lines.
-2. For **Android**: Press the <kbd>R</kbd> key twice or select **"Reload"** from the **Developer Menu** (<kbd>Ctrl</kbd> + <kbd>M</kbd> (on Window and Linux) or <kbd>Cmd ⌘</kbd> + <kbd>M</kbd> (on macOS)) to see your changes!
+## License
 
-   For **iOS**: Hit <kbd>Cmd ⌘</kbd> + <kbd>R</kbd> in your iOS Simulator to reload the app and see your changes!
-
-## Congratulations! :tada:
-
-You've successfully run and modified your React Native App. :partying_face:
-
-### Now what?
-
-- If you want to add this new React Native code to an existing application, check out the [Integration guide](https://reactnative.dev/docs/integration-with-existing-apps).
-- If you're curious to learn more about React Native, check out the [Introduction to React Native](https://reactnative.dev/docs/getting-started).
-
-# Troubleshooting
-
-If you can't get this to work, see the [Troubleshooting](https://reactnative.dev/docs/troubleshooting) page.
-
-# Learn More
-
-To learn more about React Native, take a look at the following resources:
-
-- [React Native Website](https://reactnative.dev) - learn more about React Native.
-- [Getting Started](https://reactnative.dev/docs/environment-setup) - an **overview** of React Native and how setup your environment.
-- [Learn the Basics](https://reactnative.dev/docs/getting-started) - a **guided tour** of the React Native **basics**.
-- [Blog](https://reactnative.dev/blog) - read the latest official React Native **Blog** posts.
-- [`@facebook/react-native`](https://github.com/facebook/react-native) - the Open Source; GitHub **repository** for React Native.
+Sleep Timer is open source and available under the MIT Licanse.
