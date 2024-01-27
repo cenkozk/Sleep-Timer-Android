@@ -26,6 +26,8 @@ public class StopTimerReceiver extends BroadcastReceiver {
             reactContext
                     .getJSModule(DeviceEventManagerModule.RCTDeviceEventEmitter.class)
                     .emit("StopTimerPressed", null);
+
+            BackgroundTimerModule.getInstance().stopTimer();
         } else {
             Log.e("StopTimerReceiver", "ReactApplicationContext is null");
         }

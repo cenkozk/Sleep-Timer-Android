@@ -1,4 +1,4 @@
-package com.sleeptimer;
+package com.sleeptimer.widget;
 import com.reactnativeandroidwidget.RNWidgetProvider;
 
 import android.appwidget.AppWidgetManager;

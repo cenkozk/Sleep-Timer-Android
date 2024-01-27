@@ -20,6 +20,9 @@ import {MMKVLoader} from 'react-native-mmkv-storage';
 const {BackgroundTimerModule} = NativeModules;
 import Carousel from 'react-native-snap-carousel';
 import Icon from 'react-native-vector-icons/FontAwesome';
+import WidgetPreviewComponent from './components/android_widget/WidgetPreviewComponent';
+import WidgetComponent from './components/android_widget/WidgetComponent';
+import {requestWidgetUpdate} from 'react-native-android-widget';
 
 const SleepTimerApp = () => {
   const [timerLeft, setTimerLeft] = React.useState(null);
@@ -27,6 +30,7 @@ const SleepTimerApp = () => {
   const mmkv = new MMKVLoader().initialize();
 
   const [savedActiveIndex, setSavedActiveIndex] = useState(null);
+  const [initialSavedActiveIndex, setInitialSavedActiveIndex] = useState(null);
   const [activeIndex, setActiveIndex] = useState(
     savedActiveIndex != null ? savedActiveIndex : 14,
   );
@@ -40,15 +44,13 @@ const SleepTimerApp = () => {
       if (savedIndex !== null) {
         if (savedActiveIndex == null) {
           setSavedActiveIndex(parseInt(savedIndex, 10));
+          setInitialSavedActiveIndex(parseInt(savedIndex, 10));
           setActiveIndex(parseInt(savedIndex, 10));
-        }
-
-        if (activeIndex != savedActiveIndex) {
-          setSavedActiveIndex(parseInt(savedIndex, 10));
         }
       } else {
         // If saved index is not assigned, set it to 14 and save
         setSavedActiveIndex(14);
+        setInitialSavedActiveIndex(14);
         setActiveIndex(14);
         mmkv.setString('activeIndex', '14');
       }
@@ -69,15 +71,25 @@ const SleepTimerApp = () => {
 
   useEffect(() => {
     handleUpdateInterval();
-
     // Function to save the activeIndex to MMKVStorage
     const saveActiveIndex = () => {
       mmkv.setString('activeIndex', activeIndex.toString());
+      setSavedActiveIndex(activeIndex);
     };
 
     // Call the function to save the active index whenever it changes
     saveActiveIndex();
-  }, [activeIndex, mmkv]);
+
+    //Update the widget with the savedIndex
+
+    requestWidgetUpdate({
+      widgetName: 'SleepTimer',
+      renderWidget: () => <WidgetComponent />,
+      widgetNotFound: () => {
+        // Called if no widget is present on the home screen
+      },
+    });
+  }, [activeIndex]);
 
   const [isTimerRunning, setTimerRunning] = useState(false);
 
@@ -86,6 +98,15 @@ const SleepTimerApp = () => {
     DeviceEventEmitter.addListener('TimerStarted', () => {
       console.log('Timer started');
       setTimerRunning(true);
+
+      //Notify the widget the timer started.
+      requestWidgetUpdate({
+        widgetName: 'SleepTimer',
+        renderWidget: () => <WidgetComponent timerStarted={true} />,
+        widgetNotFound: () => {
+          // Called if no widget is present on the home screen
+        },
+      });
     });
 
     // Listen for the timer stop event
@@ -93,6 +114,15 @@ const SleepTimerApp = () => {
       console.log('Timer stopped');
       setTimerRunning(false);
       setTimerLeft(null);
+
+      //Notify the widget the timer stopped.
+      requestWidgetUpdate({
+        widgetName: 'SleepTimer',
+        renderWidget: () => <WidgetComponent timerStarted={false} />,
+        widgetNotFound: () => {
+          // Called if no widget is present on the home screen
+        },
+      });
     });
 
     // Listen for the timer stop event
@@ -101,9 +131,19 @@ const SleepTimerApp = () => {
       BackgroundTimerModule.stopTimer();
       setTimerRunning(false);
       setTimerLeft(null);
+
+      //Notify the widget the timer stopped.
+      requestWidgetUpdate({
+        widgetName: 'SleepTimer',
+        renderWidget: () => <WidgetComponent timerStarted={false} />,
+        widgetNotFound: () => {
+          // Called if no widget is present on the home screen
+        },
+      });
     });
 
     DeviceEventEmitter.addListener('TimeLeft', time => {
+      setTimerRunning(true);
       if (timerLeft == null) {
         setTimerLeft(time);
       }
@@ -120,7 +160,6 @@ const SleepTimerApp = () => {
   };
 
   //Anims
-
   const AnimatedTouchable = animated(TouchableOpacity);
 
   const {padding, borderRadius, backgroundColor} = useSpring({
@@ -183,6 +222,7 @@ const SleepTimerApp = () => {
               <CarouselComponent
                 savedActiveIndex={savedActiveIndex}
                 setActiveIndex={setActiveIndex}
+                initialSavedActiveIndex={initialSavedActiveIndex}
               />
             ) : (
               <></>
@@ -191,15 +231,15 @@ const SleepTimerApp = () => {
           {timerLeft != null ? (
             <animated.View
               style={animation1}
-              className={isTimerRunning ? '' : 'absolute'}>
-              <animated.View className="flex flex-col items-center justify-around h-full">
+              className={isTimerRunning ? 'absolute' : 'absolute'}>
+              <animated.View className="flex  flex-col items-center justify-around h-full">
                 <View className="flex flex-col items-center">
                   <Text className="text-4xl text-white font-extrabold">
                     {timerLeft} Minutes
                   </Text>
                   <TypingDots />
                 </View>
-                <View className="w-28 h-28 flex items-center justify-center">
+                <View className="w-28 h-28 mt-10 flex items-center justify-center">
                   <Image
                     source={require('./assets/images/sleep.png')}
                     className="w-28 h-28"
@@ -235,6 +275,7 @@ const SleepTimerApp = () => {
           )}
         </View>
       </View>
+
       <View className=" flex-row justify-center portrait:mb-20 portrait:w-[80%] gap-3 items-center">
         {setActiveIndex != null ? (
           <AnimatedTouchable
@@ -342,7 +383,11 @@ const CarouselItem = React.memo(({item}) => (
   </View>
 ));
 
-const CarouselComponent = ({savedActiveIndex, setActiveIndex}) => {
+const CarouselComponent = ({
+  savedActiveIndex,
+  setActiveIndex,
+  initialSavedActiveIndex,
+}) => {
   const data = Array.from({length: 120}, (_, index) => index + 1);
 
   const renderItem = ({item, index}) => <CarouselItem item={item} />;
@@ -364,7 +409,7 @@ const CarouselComponent = ({savedActiveIndex, setActiveIndex}) => {
           offset: 90 * index,
           index,
         })}
-        firstItem={savedActiveIndex}
+        firstItem={initialSavedActiveIndex}
         itemHeight={90}
         sliderHeight={196}
         activeSlideAlignment="start"
