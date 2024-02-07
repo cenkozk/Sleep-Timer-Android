@@ -1,0 +1,1 @@
+Sleep Timer helps you set a timer to automatically stop media playback.

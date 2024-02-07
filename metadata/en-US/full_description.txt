@@ -1,0 +1,11 @@
+Sleep Timer
+
+ Sleep Timer is a mobile application that helps you set a timer to automatically stop media playback and create a silent environment for your sleep.
+
+Features
+
+ Media Control- The app can automatically pause or stop any running media (music, podcasts, etc.) when the sleep timer is triggered.
+
+ Interactive Timer Selector- Set your desired sleep duration with an interactive number slider, making it easy to customize the timer.
+
+ Widget Support- Use the included widget to initiate the sleep timer directly from your device's home screen.
